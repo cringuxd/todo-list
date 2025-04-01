@@ -9,6 +9,7 @@ class project_list {
     }
     addProject(proj) {
         this.#projects.push(proj);
+        //add display to sidebar with DOM
     }
     removeProject(proj) {
         //modify code here
@@ -17,8 +18,10 @@ class project_list {
 
 class project {
     #todo_items;
-    constructor() {
+    #title;
+    constructor(title) {
         this.#todo_items = [];
+        this.#title = title;
     }
     get todo_items() {
         return this.#todo_items;
@@ -29,6 +32,12 @@ class project {
     removeTodo(todo) {
         //modify code here
         this.#todo_items.pop(todo);
+    }
+    get title() {
+        return this.#title;
+    }
+    set title(t) {
+        this.#title = t;
     }
 }
 
