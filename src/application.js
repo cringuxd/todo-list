@@ -9,10 +9,16 @@ class project_list {
     }
     addProject(proj) {
         this.#projects.push(proj);
-        //add display to sidebar with DOM
     }
     removeProject(proj) {
         //modify code here
+    }
+    findProject(projTitle) {
+        for(let i = 0; i < this.#projects.length; i++) {
+            if(this.#projects[i].title == projTitle) {
+                return this.#projects[i];
+            }
+        }
     }
 }
 

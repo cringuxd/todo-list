@@ -1,4 +1,5 @@
 import {project_list, project, todo_item} from "./application.js"
+import { projects } from "./index.js"
 
 const projectDisplay = document.querySelector(".projectlist");
 const centerDisplay = document.querySelector(".center-content");
@@ -54,28 +55,30 @@ function showNewTaskPrompt() {
 
     const form = document.createElement("form");
     form.setAttribute("name", "taskform");
-    form.setAttribute("action", "");
-    form.setAttribute("method", "POST");
 
     const block1 = document.createElement("div");
     const block2 = document.createElement("div");
     const block3 = document.createElement("div");
     const block4 = document.createElement("div");
     const block5 = document.createElement("div");
+    const projblock = document.createElement("div");
     const submitButton = document.createElement("button");
+    
 
     block1.setAttribute("class","input-block");
     block2.setAttribute("class","input-block");
     block3.setAttribute("class","input-block");
     block4.setAttribute("class","input-block");
     block5.setAttribute("class","input-block");
+    projblock.setAttribute("class","input-block");
     submitButton.setAttribute("class","submitbutton");
+    submitButton.setAttribute("type","submit");
     submitButton.textContent = "Create Task";
     submitButton.addEventListener("click", function(event) {
         event.preventDefault();
-        const newTask = new FormData(form);
-        console.log(Object.fromEntries(newTask));
-        //add code here that takes a function that takes info from FormData, organizes the data from the form into variables, and creates a new todo item and assigns it to a project
+        let newTask = new FormData(form);
+        storeFormData(newTask);
+
     });
 
     const titleLabel = document.createElement("label");
@@ -88,27 +91,33 @@ function showNewTaskPrompt() {
     const priorityInput = document.createElement("input");
     const notesLabel = document.createElement("label");
     const notesInput = document.createElement("input");
+    const projLabel = document.createElement("label");
+    const projInput = document.createElement("input");
 
     titleLabel.setAttribute("for","title");
     titleLabel.textContent = "title: "
     titleInput.setAttribute("type","text");
-    titleInput.setAttribute("id","title");
+    titleInput.setAttribute("name","title");
     descriptionLabel.setAttribute("for","description");
     descriptionLabel.textContent = "description: "
     descriptionInput.setAttribute("type","text");
-    descriptionInput.setAttribute("id","description");
+    descriptionInput.setAttribute("name","description");
     dateLabel.setAttribute("for","date");
     dateLabel.textContent = "date: "
     dateInput.setAttribute("type","text");
-    dateInput.setAttribute("id","date");
+    dateInput.setAttribute("name","date");
     priorityLabel.setAttribute("for","priority");
     priorityLabel.textContent = "priority: "
     priorityInput.setAttribute("type","text");
-    priorityInput.setAttribute("id","priority");
+    priorityInput.setAttribute("name","priority");
     notesLabel.setAttribute("for","notes");
     notesLabel.textContent = "notes: "
     notesInput.setAttribute("type","text");
-    notesInput.setAttribute("id","notes");
+    notesInput.setAttribute("name","notes");
+    projLabel.setAttribute("for","project");
+    projLabel.textContent = "project: "
+    projInput.setAttribute("type","text");
+    projInput.setAttribute("name","project");
 
     block1.appendChild(titleLabel);
     block1.appendChild(titleInput);
@@ -120,16 +129,33 @@ function showNewTaskPrompt() {
     block4.appendChild(priorityInput);
     block5.appendChild(notesLabel);
     block5.appendChild(notesInput);
+    projblock.appendChild(projLabel);
+    projblock.appendChild(projInput);
     form.appendChild(block1);
     form.appendChild(block2);
     form.appendChild(block3);
     form.appendChild(block4);
     form.appendChild(block5);
+    form.appendChild(projblock);
     form.appendChild(submitButton);
     itemDisplay.appendChild(form);
     centerDisplay.appendChild(itemDisplay);
 }
 
+function storeFormData(form) {
+    //organizes the data from the form into variables, and creates a new todo item and assigns it to a project
+    const todoInfo = [];
+    let i = 0;
+    for (let pair of form.entries()) {
+        todoInfo[i] = pair[1];
+        i++;
+    }
+    console.log(todoInfo[0]);
+    const proj = projects.findProject(todoInfo[5]);
+    proj.addTodo(new todo_item(todoInfo[0],todoInfo[1],todoInfo[2],todoInfo[3],todoInfo[4],todoInfo[5]));
+    clearCenterDisplay();
+    showProjectInfo(proj);
+}
 function showTaskInfo(item) {
     const itemDisplay = document.createElement("div");
     itemDisplay.setAttribute("class", "itemdisplay");

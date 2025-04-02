@@ -45,3 +45,5 @@ projects.projects[1].addTodo(new todo_item("Default Todo 4", "This is a default 
 createProject(projects.projects[1]);
 console.log(projects.projects[0].todo_items[0].title);
 showProjectInfo(projects.projects[0]);
+
+export { projects };
