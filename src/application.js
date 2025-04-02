@@ -1,3 +1,4 @@
+import { storeInfo } from "./index.js"
 //Handles application logic, including management of todo-items, project(s), and default project instantiation
 class project_list {
     #projects;
@@ -9,10 +10,12 @@ class project_list {
     }
     addProject(proj) {
         this.#projects.push(proj);
+        storeInfo()
     }
     removeProject(proj) {
         let ind = this.#projects.indexOf(proj);
         this.#projects.splice(ind,1);
+        storeInfo()
     }
     findProject(projTitle) {
         for(let i = 0; i < this.#projects.length; i++) {
@@ -35,11 +38,12 @@ class project {
     }
     addTodo(todo) {
         this.#todo_items.push(todo);
+        storeInfo()
     }
     removeTodo(todo) {
-        //modify code here
         let ind = this.#todo_items.indexOf(todo);
         this.#todo_items.splice(ind,1);
+        storeInfo()
     }
     get title() {
         return this.#title;
