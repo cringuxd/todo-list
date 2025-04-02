@@ -11,7 +11,8 @@ class project_list {
         this.#projects.push(proj);
     }
     removeProject(proj) {
-        //modify code here
+        let ind = this.#projects.indexOf(proj);
+        this.#projects.splice(ind,1);
     }
     findProject(projTitle) {
         for(let i = 0; i < this.#projects.length; i++) {
@@ -37,7 +38,8 @@ class project {
     }
     removeTodo(todo) {
         //modify code here
-        this.#todo_items.pop(todo);
+        let ind = this.#todo_items.indexOf(todo);
+        this.#todo_items.splice(ind,1);
     }
     get title() {
         return this.#title;

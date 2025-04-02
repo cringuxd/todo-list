@@ -4,24 +4,42 @@ import { projects } from "./index.js"
 const projectDisplay = document.querySelector(".projectlist");
 const centerDisplay = document.querySelector(".center-content");
 const newTaskButton = document.querySelector(".taskbutton");
+const newProjectButton = document.querySelector(".projbutton");
 
 newTaskButton.addEventListener("click", function(e) {
     clearCenterDisplay();
     showNewTaskPrompt();
 });
 
+newProjectButton.addEventListener("click", function(e) {
+    clearCenterDisplay();
+    showNewProjectPrompt();
+});
+
 function createProject(proj) {
     let projectDiv = document.createElement("div");
     projectDiv.textContent = proj.title;
     projectDiv.setAttribute("class","proj");
+
     let projectButton = document.createElement("button");
+    let deleteButton = document.createElement("button");
+
     projectButton.setAttribute("class","projectbutton");
     projectButton.textContent = "view";
     projectButton.addEventListener("click", function(e) {
         clearCenterDisplay();
         showProjectInfo(proj);
     });
+    deleteButton.textContent = "delete";
+    deleteButton.addEventListener("click", function(e) {
+        projects.removeProject(proj);
+        projectDisplay.removeChild(projectDiv);
+        if(projects.projects.length == 0) {
+            clearCenterDisplay();
+        }
+    });
     projectDiv.appendChild(projectButton);
+    projectDiv.appendChild(deleteButton);
     projectDisplay.appendChild(projectDiv);
 }
 
@@ -39,10 +57,10 @@ function showProjectInfo(proj) {
     for(let i = 0; i < itemList.length; i++) {
         item = document.createElement("div");
         item.setAttribute("class", "item");
-        item.textContent = itemList[i].title + " - " + itemList[i].description;
+        item.textContent = itemList[i].title + " - " + itemList[i].description + " - Due: " + itemList[i].dueDate;
         item.addEventListener("click", function(e) {
             clearCenterDisplay();
-            showTaskInfo(itemList[i]);
+            showTaskInfo(itemList[i],proj);
         });
         itemDisplay.appendChild(item);
     }
@@ -142,6 +160,29 @@ function showNewTaskPrompt() {
     centerDisplay.appendChild(itemDisplay);
 }
 
+function showNewProjectPrompt() {
+    const itemDisplay = document.createElement("div");
+    itemDisplay.setAttribute("class", "itemdisplay");
+
+    const projectInput = document.createElement("input");
+    const confirmButton = document.createElement("button");
+
+    confirmButton.textContent = "Confirm";
+    confirmButton.addEventListener("click", function(e) {
+        if(projectInput.value != "") {
+            let newProj = new project(projectInput.value);
+            projects.addProject(newProj);
+            createProject(newProj);
+            clearCenterDisplay();
+            showProjectInfo(newProj);
+        }
+    });
+
+    itemDisplay.appendChild(projectInput);
+    itemDisplay.appendChild(confirmButton);
+
+    centerDisplay.appendChild(itemDisplay);
+}
 function storeFormData(form) {
     //organizes the data from the form into variables, and creates a new todo item and assigns it to a project
     const todoInfo = [];
@@ -156,7 +197,8 @@ function storeFormData(form) {
     clearCenterDisplay();
     showProjectInfo(proj);
 }
-function showTaskInfo(item) {
+
+function showTaskInfo(item,proj) {
     const itemDisplay = document.createElement("div");
     itemDisplay.setAttribute("class", "itemdisplay");
 
@@ -166,6 +208,9 @@ function showTaskInfo(item) {
     const itemPriority = document.createElement("div");
     const itemNotes = document.createElement("div");
     const itemComplete = document.createElement("div");
+    const buttonDiv = document.createElement("div");
+    const editButton = document.createElement("button");
+    const deleteButton = document.createElement("button");
 
     itemTitle.textContent = item.title;
     itemDescription.textContent = item.description;
@@ -173,15 +218,71 @@ function showTaskInfo(item) {
     itemPriority.textContent = "Priority: " + item.priority;
     itemNotes.textContent = item.notes;
     itemComplete.textContent = item.isComplete;
+    editButton.textContent = "Edit";
+    deleteButton.textContent = "Delete";
 
+    editButton.addEventListener("click", function(e) {
+        editTaskContent(item,proj);
+    });
+
+    deleteButton.addEventListener("click", function(e) {
+        deleteTaskContent(item,proj);
+    });
+
+    buttonDiv.appendChild(editButton);
+    buttonDiv.appendChild(deleteButton);
     itemDisplay.appendChild(itemTitle);
     itemDisplay.appendChild(itemDescription);
     itemDisplay.appendChild(itemDue);
     itemDisplay.appendChild(itemPriority);
     itemDisplay.appendChild(itemNotes);
     itemDisplay.appendChild(itemComplete);
+    itemDisplay.appendChild(buttonDiv);
 
     centerDisplay.appendChild(itemDisplay);
+}
+
+function editTaskContent(item,proj) {
+    clearCenterDisplay();
+    const itemDisplay = document.createElement("div");
+    itemDisplay.setAttribute("class", "itemdisplay");
+    const editTitle = document.createElement("input");
+    const editDescription = document.createElement("input");
+    const editDate = document.createElement("input");
+    const editPriority = document.createElement("input");
+    const editNotes = document.createElement("input");
+    const confirmButton = document.createElement("button");
+
+    editTitle.value = item.title;
+    editDescription.value = item.description;
+    editDate.value = item.date;
+    editPriority.value = item.priority;
+    editNotes.value = item.notes;
+    confirmButton.textContent = "Confirm";
+
+    confirmButton.addEventListener("click", function(e) {
+        item.title = editTitle.value;
+        item.description = editDescription.value;
+        item.date = editDate.value;
+        item.priority = editPriority.value;
+        item.notes = editNotes.value;
+        clearCenterDisplay();
+        showTaskInfo(item,proj);
+    });
+
+    itemDisplay.appendChild(editTitle);
+    itemDisplay.appendChild(editDescription);
+    itemDisplay.appendChild(editDate);
+    itemDisplay.appendChild(editPriority);
+    itemDisplay.appendChild(editNotes);
+    itemDisplay.appendChild(confirmButton);
+    centerDisplay.appendChild(itemDisplay);
+}
+
+function deleteTaskContent(item,proj) {
+    clearCenterDisplay();
+    proj.removeTodo(item);
+    showProjectInfo(proj);
 }
 
 
